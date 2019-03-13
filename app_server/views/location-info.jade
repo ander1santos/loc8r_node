@@ -1,0 +1,60 @@
+extends layout
+
+include _includes/sharedHTMLfunctions
+
+block content
+   .row.page-header
+      .col-lg-12
+         h1= pageHeader.title
+   .row
+      .col-xs-12.col-sm-9
+         .row
+            .col-xs-12.col-sm-6
+               p.rating
+                  +saidaRating(location.rating)
+                  p= location.endereco
+                  .panel.panel-primary
+                     .panel-heading
+                        h2.panel-title Hor&aacute;rio de Funcionamento
+                     .panel-body
+                        each periodo in location.horarioFunc
+                           p
+                              | #{periodo.dias} : 
+                              if periodo.fechado
+                                 | fechado
+                              else
+                                 | #{periodo.abre} - #{periodo.fecha}
+                  .panel.panel-primary
+                     .panel-heading
+                        h2.panel-title Facilidades
+                     .panel-body
+                        each facilidade in location.facilities
+                           span.label.label-warning 
+                              span.glyphicon.glyphicon-ok
+                              | &nbsp;#{facilidade}
+                           | &nbsp;
+            .col-xs-12.col-sm-6.location-map
+               .panel.panel-primary
+                  .panel-heading
+                     h2.panel-title Mapa da Localidade
+                  .panel-body
+                     img.img-responsive.img-rounded(src='http://maps.googleapis.com/maps/api/staticmap?center=#{location.coords.lat},#{location.coords.lng}&zoom=17&size=400x350&sensor=false&markers=#{location.coords.lat},#{location.coords.lng}&scale=2')
+         .row
+            .col-xs-12
+               .panel.panel-primary.review-panel
+                  .panel-heading
+                     a.btn.btn-default.pull-right(href='/location/review/new') Adicionar coment&aacute;rio
+                     h2.panel-title Coment&aacute;rios dos clientes
+                  .panel-body.review-container
+                     each comentario in location.reviews
+                        .row
+                           .well.well-sm.review-header
+                              span.rating
+                                 +saidaRating(comentario.rating)
+                              span.reviewAuthor #{comentario.author}
+                              small.reviewTimestamp #{comentario.data}
+                           .col-xs-12
+                              p !{(comentario.texto).replace(/\n/g,'<br/>')}
+      .col-xs-12.col-sm-3
+         .p.lead #{location.nome} !{painelLateral.context}
+         .p!= painelLateral.callToAction
